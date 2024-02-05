@@ -1,12 +1,12 @@
 steps:
   #Docker Build
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['build', '-t', 'us-central1-docker.pkg.dev/${PROJECT_ID}/my-docker-repo/myimage', '.']
+    args: ['build', '-t', 'us-central1-docker.pkg.dev/${PROJECT_ID}/istha-ialpr/myimage', '.']
 
   #Docker Push to Google Artifact Registry
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['push', 'us-central1-docker.pkg.dev/${PROJECT_ID}/my-docker-repo/myimage']
+    args: ['push', 'us-central1-docker.pkg.dev/${PROJECT_ID}/istha-ialpr/myimage']
   
   #Store images in Google Artifact Registry
 images:
-  - us-central1-docker.pkg.dev/${PROJECT_ID}/my-docker-repo/myimage
+  - us-central1-docker.pkg.dev/${PROJECT_ID}/istha-ialpr/myimage
