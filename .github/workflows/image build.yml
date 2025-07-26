@@ -1,0 +1,41 @@
+name: Build and Push Docker Image to ACR
+on:
+  workflow_dispatch:
+
+  push:
+    branches: [ main ]
+    paths:
+      - 'Dockerfile'
+
+permissions:
+  id-token: write       # Required for OIDC authentication
+  contents: read
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout source code
+      uses: actions/checkout@v3
+
+    - name: Azure Login with OIDC
+      uses: azure/login@v1
+      with:
+        auth-type: ID_TOKEN
+        client-id: ${{ secrets.AZURE_CLIENT_ID }}
+        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+    - name: Docker login to Azure Container Registry
+      run: az acr login --name ${{ secrets.ACR_NAME }}
+
+    - name: Set ACR login server as env var
+      run: echo "ACR_LOGIN_SERVER=$(az acr show --name ${{ secrets.ACR_NAME }} --query loginServer -o tsv)" >> $GITHUB_ENV
+
+    - name: Build Docker image
+      run: |
+        docker build -t $ACR_LOGIN_SERVER/myapp:${{ github.sha }} .
+
+    - name: Push Docker image to ACR
+      run: |
+        docker push $ACR_LOGIN_SERVER/myapp:${{ github.sha }}
