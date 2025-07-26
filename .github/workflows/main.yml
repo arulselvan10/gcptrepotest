@@ -1,0 +1,103 @@
+name: Install or Update Flux on Multiple Arc Clusters
+ 
+on:
+  workflow_dispatch:
+
+  push:
+    branches: [ main ]
+    paths:
+      - 'clusters.json'
+ 
+jobs:
+  generate-matrix:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+ 
+      - name: Load clusters.json
+        id: set-matrix
+        run: |
+          matrix=$(jq -c '.' clusters.json)
+          echo "matrix=$matrix" >> $GITHUB_OUTPUT
+ 
+  install-flux:
+    needs: generate-matrix
+    runs-on: ubuntu-latest
+    strategy:
+      max-parallel: 5  # Adjust for throttling
+      matrix:
+        cluster: ${{ fromJson(needs.generate-matrix.outputs.matrix) }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+ 
+      - name: Azure Login (OIDC)
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ matrix.cluster.subscriptionId }}
+ 
+      - name: Install or Update Flux
+        run: |
+          NAME="${{ matrix.cluster.name }}"
+          RG="${{ matrix.cluster.resourceGroup }}"
+ 
+          echo "▶️ Working on cluster: $NAME in RG: $RG"
+ 
+          # Check if extension exists
+          if az k8s-extension show \
+            --name flux \
+            --cluster-name "$NAME" \
+            --resource-group "$RG" \
+            --cluster-type connectedClusters \
+            --only-show-errors &>/dev/null; then
+ 
+            echo "✅ Flux already installed on $NAME"
+ 
+            CURRENT_RELEASE=$(az k8s-extension show \
+              --name flux \
+              --cluster-name "$NAME" \
+              --resource-group "$RG" \
+              --cluster-type connectedClusters \
+              --query 'releaseTrain' -o tsv)
+ 
+            AUTO_UPGRADE=$(az k8s-extension show \
+              --name flux \
+              --cluster-name "$NAME" \
+              --resource-group "$RG" \
+              --cluster-type connectedClusters \
+              --query 'autoUpgradeMinorVersion' -o tsv)
+ 
+            echo "🔍 releaseTrain: $CURRENT_RELEASE"
+            echo "🔍 autoUpgradeMinorVersion: $AUTO_UPGRADE"
+ 
+            if [ "$AUTO_UPGRADE" != "true" ] || [ "$CURRENT_RELEASE" != "stable" ]; then
+              echo "🔄 Updating Flux extension..."
+              az k8s-extension update \
+                --name flux \
+                --cluster-name "$NAME" \
+                --resource-group "$RG" \
+                --cluster-type connectedClusters \
+                --release-train stable \
+                --auto-upgrade-minor-version true
+            else
+              echo "✅ Flux is already up to date on $NAME"
+            fi
+ 
+          else
+            echo "📦 Installing Flux on $NAME..."
+            az k8s-extension create \
+              --name flux \
+              --cluster-name "$NAME" \
+              --resource-group "$RG" \
+              --cluster-type connectedClusters \
+              --extension-type microsoft.flux \
+              --scope cluster \
+              --release-train stable \
+              --release-namespace flux-system \
+              --auto-upgrade-minor-version true
+          fi
