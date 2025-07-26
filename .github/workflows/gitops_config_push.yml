@@ -22,7 +22,7 @@ jobs:
 
     defaults:
       run:
-        working-directory: clusters/${{ matrix.env }}
+        working-directory: terraform/clusters/${{ matrix.env }}
 
     steps:
       - uses: actions/checkout@v3
