@@ -1,43 +1,24 @@
-variable "config_name" {
-  description = "The name of the Flux configuration"
-  type        = string
-}
+variable "config_name" { type = string }
+variable "cluster_id" { type = string }
+variable "operator_namespace" { type = string }
+variable "scope" { type = string }                 # e.g. "cluster"
 
-variable "cluster_id" {
-  description = "The ARM resource ID of the AKS cluster"
-  type        = string
-}
+variable "repository_url" { type = string }
+variable "repository_branch_type" { type = string } # branch, tag, commit
+variable "repository_branch" { type = string }
 
-variable "operator_namespace" {
-  description = "Namespace where Flux will be installed"
-  type        = string
-  default     = "flux-system"
-}
+variable "git_sync_interval" { type = number }
+variable "git_timeout" { type = number }
 
-variable "repository_url" {
-  description = "Git repository URL"
-  type        = string
-}
+variable "repository_path" { type = string }
 
-variable "repository_branch" {
-  description = "Git branch"
-  type        = string
-  default     = "main"
-}
+variable "sync_interval" { type = number }
+variable "timeout" { type = number }
+variable "retry_interval" { type = number }
+variable "garbage_collection" { type = bool }
+variable "wait" { type = bool }
 
-variable "repository_path" {
-  description = "Path in repo to the kustomization.yaml"
-  type        = string
-}
-
-variable "sync_interval" {
-  description = "Sync interval in seconds"
-  type        = number
-  default     = 60
-}
-
-variable "timeout" {
-  description = "Sync timeout in seconds"
-  type        = number
-  default     = 600
+variable "depends_on" {
+  type    = list(any)
+  default = []
 }
