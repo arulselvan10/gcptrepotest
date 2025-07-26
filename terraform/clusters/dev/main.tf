@@ -28,5 +28,8 @@ module "gitops" {
   garbage_collection     = var.garbage_collection
   wait                    = var.wait
 
-  depends_on             = var.depends_on
+  depends_on = [
+    azurerm_kubernetes_cluster.aks   # or any other resource the GitOps config depends on
+  ]
 }
+
