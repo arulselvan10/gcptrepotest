@@ -1,4 +1,4 @@
-resource "azurerm_kubernetes_cluster_gitops_config" "flux" {
+resource "azurerm_kubernetes_flux_configuration" "flux" {
   name                    = var.config_name
   cluster_name            = var.cluster_name
   resource_group_name     = var.resource_group_name
