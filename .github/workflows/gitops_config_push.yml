@@ -44,3 +44,4 @@ jobs:
 
       - name: Terraform Apply
         run: terraform apply -auto-approve -var-file=${{ matrix.env }}.tfvars
+        timeout-minutes: 5
