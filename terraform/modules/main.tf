@@ -1,8 +1,8 @@
 resource "azurerm_kubernetes_flux_configuration" "this" {
-  name       = var.config_name
-  cluster_id = var.cluster_id
-  namespace  = var.operator_namespace
-  scope      = var.scope
+  name        = var.config_name
+  cluster_id  = var.cluster_id
+  namespace   = var.operator_namespace
+  scope       = var.scope
 
   git_repository {
     url                     = var.repository_url
@@ -21,6 +21,4 @@ resource "azurerm_kubernetes_flux_configuration" "this" {
     garbage_collection_enabled  = var.garbage_collection
     wait                        = var.wait
   }
-
-  depends_on = var.depends_on
 }
