@@ -10,12 +10,16 @@ provider "azurerm" {
   features {}
 }
 
-module "gitops" {
+data "azurerm_kubernetes_cluster" "aks" {
+  name                = var.cluster_name
+  resource_group_name = var.resource_group_name
+}
+
+module "gitops_flux" {
   source = "../../modules"
 
   config_name          = var.config_name
-  cluster_name         = var.cluster_name
-  resource_group_name  = var.resource_group_name
+  cluster_id           = data.azurerm_kubernetes_cluster.aks.id
   operator_namespace   = var.operator_namespace
   repository_url       = var.repository_url
   repository_branch    = var.repository_branch
