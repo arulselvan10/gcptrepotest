@@ -13,5 +13,3 @@ timeout                 = 300
 retry_interval          = 120
 garbage_collection      = true
 wait                    = true
-
-depends_on = []
