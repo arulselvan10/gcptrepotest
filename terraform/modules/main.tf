@@ -1,19 +1,22 @@
-resource "azurerm_kubernetes_flux_configuration" "flux" {
-  name                    = var.config_name
-  cluster_name            = var.cluster_name
-  resource_group_name     = var.resource_group_name
-  operator_namespace      = var.operator_namespace
-  operator_instance_name  = "flux"
-  repository_url          = var.repository_url
-  repository_reference_type  = "branch"
-  repository_reference_value = var.repository_branch
-  operator_params         = "--git-readonly=true --git-poll-interval=1m"
+resource "azurerm_kubernetes_flux_configuration" "this" {
+  name        = var.config_name
+  cluster_id  = var.cluster_id
+  namespace   = var.operator_namespace
+  scope       = "cluster"
+  source_kind = "GitRepository"
+  suspend     = false
 
-  kustomization {
-    name                        = "apps"
-    path                        = var.repository_path
-    sync_interval_in_seconds    = var.sync_interval
-    timeout_in_seconds          = var.timeout
-    prune                       = true
+  git_repository {
+    url            = var.repository_url
+    reference_type = "branch"
+    reference_name = var.repository_branch
+  }
+
+  kustomizations {
+    name     = "apps"
+    path     = var.repository_path
+    prune    = true
+    interval = "${var.sync_interval}s"
+    timeout  = "${var.timeout}s"
   }
 }
