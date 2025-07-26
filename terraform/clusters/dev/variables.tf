@@ -1,0 +1,9 @@
+variable "config_name" {}
+variable "cluster_name" {}
+variable "resource_group_name" {}
+variable "operator_namespace" {}
+variable "repository_url" {}
+variable "repository_branch" {}
+variable "repository_path" {}
+variable "sync_interval" {}
+variable "timeout" {}
