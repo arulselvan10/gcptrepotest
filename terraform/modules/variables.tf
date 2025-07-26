@@ -17,8 +17,3 @@ variable "timeout" { type = number }
 variable "retry_interval" { type = number }
 variable "garbage_collection" { type = bool }
 variable "wait" { type = bool }
-
-variable "depends_on" {
-  type    = list(any)
-  default = []
-}
