@@ -13,9 +13,6 @@ clusters = [
 
 gitops_repo_url = "https://github.com/arulselvan10/gcprepotest"
 
-# Option 1: PAT direct
-github_pat = "ghp_yourPAT"
-use_key_vault = false
 
 # Option 2: Key Vault
 # use_key_vault = true
