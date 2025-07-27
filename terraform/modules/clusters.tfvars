@@ -12,9 +12,3 @@ clusters = [
 ]
 
 gitops_repo_url = "https://github.com/arulselvan10/gcprepotest"
-
-
-# Option 2: Key Vault
-# use_key_vault = true
-# key_vault_name = "myGitOpsVault"
-# github_pat_secret_name = "github-pat"
