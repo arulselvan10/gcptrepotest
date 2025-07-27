@@ -8,6 +8,6 @@ resource "azurerm_kubernetes_flux_configuration" "gitops" {
   git_repository_url           = var.gitops_repo_url
   git_repository_reference     = { branch = "main" }
   git_repository_auth_type     = "Token"
-  git_repository_token         = local.pat_value
+  git_repository_token         = test
   sync_interval_in_seconds     = 60
 }
