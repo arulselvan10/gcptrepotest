@@ -1,10 +1,10 @@
 apiVersion: source.toolkit.fluxcd.io/v1
 kind: GitRepository
 metadata:
-  name: apps-repo
+  name: testrepo
   namespace: flux-system
 spec:
   interval: 1m
-  url: https://github.com/arulselvan10/gcprepotest
+  url: https://github.com/arulselvan10/testrepo
   ref:
     branch: main
